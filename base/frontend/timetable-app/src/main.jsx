@@ -5,13 +5,15 @@ import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import Login from "./Login";
 import TimeTable from "./Time";
 import CreateTime from "./Admin/AdminTime/CreateTime";
+import "bootstrap/dist/css/bootstrap.min.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <nav>
         <Link to="/">Home</Link> | <Link to="/login">Login</Link> |{" "}
-        <Link to="/time">TimeTable</Link>
+        <Link to="/time">TimeTable</Link> |{" "}
+        <Link to="/admin/time/create">Admin Time</Link>
       </nav>
       <Routes>
         <Route path="/" element={<App />} />
