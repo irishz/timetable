@@ -64,6 +64,7 @@ function CreateTime() {
     let lastDateTime = moment(startTime).format();
     let i = 1;
     let mc_idx = 1;
+    
     while (moment(lastDateTime).diff(moment(lastWorkDay), "days") <= 0) {
       // Batch Number
       if (i % 2 === 1) {
@@ -143,7 +144,7 @@ function CreateTime() {
           item_data.start_prim_press;
         let minus_time_end_extruder =
           item_data.end_prepress + item_data.start_prim_press;
-        let minus_time_end_prepress = item_data.start_prim_press
+        let minus_time_end_prepress = item_data.start_prim_press;
         start_time = moment(temp).add(-minus_time_start, "minutes").format();
         kneader_time = moment(temp)
           .add(-minus_time_kneader, "minutes")
@@ -151,19 +152,37 @@ function CreateTime() {
         end_extruder_time = moment(temp)
           .add(-minus_time_end_extruder, "minutes")
           .format();
-          end_prepress_time = moment(temp).add(-minus_time_end_prepress, 'minutes').format()
-          start_prim_press_time = temp
-          end_prim_press_time = moment(start_prim_press_time).add(item_data.end_prim_press, 'minutes').format()
-          start_sec_press_time = moment(end_prim_press_time).add(item_data.start_sec_press, 'minutes').format()
-          steam_in_time = moment(start_sec_press_time).add(-item_data.steam_in, 'minutes').format()
-          start_sec_press2_time = moment(start_sec_press_time).add(item_data.start_sec_press2, 'minutes').format()
-          end_sec_press_time = moment(start_sec_press_time).add(item_data.end_sec_press_time, 'minutes').format()
-          cooling_time = moment(end_sec_press_time).add(-item_data.cooling, 'minutes').format()
-          record_sec_press_time = moment(start_sec_press_time).add(item_data.record_sec_press, 'minutes').format()
-          record_sec_press2_time = moment(start_sec_press2_time).add(item_data.record_sec_press2, 'minutes').format()
+        end_prepress_time = moment(temp)
+          .add(-minus_time_end_prepress, "minutes")
+          .format();
+        start_prim_press_time = temp;
       }
+      end_prim_press_time = moment(start_prim_press_time)
+        .add(item_data.end_prim_press, "minutes")
+        .format();
+      start_sec_press_time = moment(end_prim_press_time)
+        .add(item_data.start_sec_press, "minutes")
+        .format();
+      steam_in_time = moment(start_sec_press_time)
+        .add(-item_data.steam_in, "minutes")
+        .format();
+      start_sec_press2_time = moment(start_sec_press_time)
+        .add(item_data.start_sec_press2, "minutes")
+        .format();
+      end_sec_press_time = moment(start_sec_press_time)
+        .add(item_data.end_sec_press_time, "minutes")
+        .format();
+      cooling_time = moment(end_sec_press_time)
+        .add(-item_data.cooling, "minutes")
+        .format();
+      record_sec_press_time = moment(start_sec_press_time)
+        .add(item_data.record_sec_press, "minutes")
+        .format();
+      record_sec_press2_time = moment(start_sec_press2_time)
+        .add(item_data.record_sec_press2, "minutes")
+        .format();
 
-      lastDateTime = start_time;
+      lastDateTime = end_prim_press_time;
 
       let lotObj = {
         batch_no: batch_no,
