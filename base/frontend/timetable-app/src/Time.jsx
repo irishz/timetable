@@ -156,6 +156,7 @@ function Time() {
               {renderCell(time.start)}
               {renderCell(time.kneader)}
               {renderCell(time.out_kneader)}
+              {/* render out_prepress */}
               {idx + 1 === elements.length ? (
                 <td>{time.out_prepress}</td>
               ) : time.block_qty + elements[idx + 1].block_qty === 6 ? (
