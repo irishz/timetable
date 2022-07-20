@@ -1,3 +1,13 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .table-cell {
+    border: 1px solid gray;
+
+  },
+  .table-cell:hover {
+    background-color: "#808080",
+  }
+}

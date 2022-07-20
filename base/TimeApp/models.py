@@ -1,6 +1,8 @@
 from django.db import models
 from datetime import datetime
-# Create your models here.
+
+from django.forms import IntegerField
+
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
     item = models.CharField(max_length=40)
@@ -24,16 +26,20 @@ class Lot(models.Model):
     batch_no = models.IntegerField(default=0, blank=True, null=True)
     run_no = models.IntegerField(default=0, blank=True, null=True)
     mc_no = models.IntegerField(default=0, blank=True, null=True)
-    start_time = models.DateTimeField(default=datetime.now())
-    kneader_time = models.DateTimeField(default=datetime.now())
-    end_extruder_time = models.DateTimeField(default=datetime.now())
-    end_prepress_time = models.DateTimeField(default=datetime.now())
-    start_prim_press_time = models.DateTimeField(default=datetime.now())
-    end_prim_press_time = models.DateTimeField(default=datetime.now())
-    steam_in_time = models.DateTimeField(default=datetime.now())
-    start_sec_press_time = models.DateTimeField(default=datetime.now())
-    start_sec_press2_time = models.DateTimeField(default=datetime.now())
-    cooling_time = models.DateTimeField(default=datetime.now())
-    record_sec_press_time = models.DateTimeField(default=datetime.now())
-    record_sec_press2_time = models.DateTimeField(default=datetime.now())
-    end_sec_press_time = models.DateTimeField(default=datetime.now())
+    block_qty = models.IntegerField(default=0, blank=True, null=True)
+    block_temp = models.IntegerField(default=0, blank=True, null=True)
+    start_time = models.DateTimeField(default=datetime.now(), null=True)
+    kneader_time = models.DateTimeField(default=datetime.now(), null=True)
+    end_extruder_time = models.DateTimeField(default=datetime.now(), null=True)
+    end_prepress_time = models.DateTimeField(default=datetime.now(), null=True)
+    start_prim_press_time = models.DateTimeField(default=datetime.now(), null=True)
+    end_prim_press_time = models.DateTimeField(default=datetime.now(), null=True)
+    steam_in_time = models.DateTimeField(default=datetime.now(), null=True)
+    start_sec_press_time = models.DateTimeField(default=datetime.now(), null=True)
+    start_sec_press2_time = models.DateTimeField(default=datetime.now(), null=True)
+    cooling_time = models.DateTimeField(default=datetime.now(), null=True)
+    record_sec_press_time = models.DateTimeField(default=datetime.now(), null=True)
+    record_sec_press2_time = models.DateTimeField(default=datetime.now(), null=True)
+    end_sec_press_time = models.DateTimeField(default=datetime.now(), null=True)
+    workday = models.DateTimeField(default=datetime.now(), null=False)
+    flag = models.IntegerField(default=0, blank=False, null=False)
