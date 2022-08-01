@@ -56,7 +56,6 @@ function CreateTime() {
     let totalRow = 0;
 
     while (countWorkDays < workDays) {
-      console.log('start counting')
       let i = 1,
         count = 1,
         batch_no = 1,
@@ -70,16 +69,14 @@ function CreateTime() {
         .add(12, "hours")
         .add(45, "minutes")
         .format();
-      // console.log("Start Time : " + tempStartTime);
-      // console.log("Last Time : " + lastWorkDay);
-      countWorkDays += 1;
+      console.log("Start Time : " + tempStartTime);
+      console.log("Last Time : " + lastWorkDay);
 
       let lastDateTime = tempStartTime;
-      while (moment(lastDateTime).diff(moment(lastWorkDay), "hour") < 0) {
-        console.log('start count time')
-        lastDateTime = moment(lastDateTime).add(1.5, "hours").format();
-        // console.log(moment(lastDateTime).format("DD/MM/YYYY HH:mm"));
 
+      countWorkDays += 1;
+
+      while (moment(lastDateTime).diff(moment(lastWorkDay), "hour") < 0) {
         // Batch Number
         if (i % 2 === 1) {
           batch_no = (i + 1) / 2;
@@ -120,6 +117,31 @@ function CreateTime() {
           } else {
             mc_no = count;
           }
+          // Block Quantity
+          console.log(count);
+          switch (count) {
+            case 1:
+            case 5:
+              block_qty = 6;
+              block_temp = 0;
+              break;
+            case 2:
+              block_qty = 0;
+              block_temp = 3;
+              break;
+            case 3:
+              block_qty = 3;
+              block_temp = 6;
+              break;
+            case 4:
+              block_qty = 0;
+              block_temp = 6;
+              break;
+            default:
+              block_qty = 6;
+              block_temp = 0;
+              break;
+          }
         }
         // Running Number
         if (i === 3 || count % 3 === 0) {
@@ -128,7 +150,7 @@ function CreateTime() {
           run_no += 1;
         }
 
-        if ((i = 1)) {
+        if (i === 1) {
           start_time = moment(tempStartTime).format();
           kneader_time = moment(start_time)
             .add(item_data.kneader, "minutes")
@@ -166,8 +188,195 @@ function CreateTime() {
           record_sec_press2_time = moment(start_sec_press2_time)
             .add(item_data.record_sec_press2, "minutes")
             .format();
-          return;
+          console.log(
+            `%c Case: i = 1 | ` + end_sec_press_time + " -> " + count,
+            "color: red"
+          );
+        } else {
+          switch (block_qty) {
+            case 6:
+              console.log("case Block Qty = 6 | " + count);
+              start_time = moment(lotList[totalRow - 1].end_prim_press_time)
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress -
+                    item_data.end_extruder -
+                    item_data.kneader,
+                  "minutes"
+                )
+                .format();
+              kneader_time = moment(lotList[totalRow - 1].end_prim_press_time)
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress -
+                    item_data.end_extruder,
+                  "minutes"
+                )
+                .format();
+              end_extruder_time = moment(
+                lotList[totalRow - 1].end_prim_press_time
+              )
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress,
+                  "minutes"
+                )
+                .format();
+              end_prepress_time = moment(
+                lotList[totalRow - 1].end_prim_press_time
+              )
+                .add(item_data.extra1 - item_data.start_prim_press, "minutes")
+                .format();
+              start_prim_press_time = moment(
+                lotList[totalRow - 1].end_prim_press_time
+              )
+                .add(item_data.extra1, "minutes")
+                .format();
+              end_prim_press_time = moment(start_prim_press_time)
+                .add(item_data.end_prim_press, "minutes")
+                .format();
+              start_sec_press_time = moment(end_prim_press_time)
+                .add(item_data.start_sec_press, "minutes")
+                .format();
+              steam_in_time = moment(start_sec_press_time)
+                .add(-item_data.steam_in, "minutes")
+                .format();
+              start_sec_press2_time = moment(start_sec_press_time)
+                .add(item_data.start_sec_press2, "minutes")
+                .format();
+              end_sec_press_time = moment(start_sec_press_time)
+                .add(item_data.end_sec_press, "minutes")
+                .format();
+              cooling_time = moment(end_sec_press_time)
+                .add(-item_data.cooling, "minutes")
+                .format();
+              record_sec_press_time = moment(start_sec_press_time)
+                .add(item_data.record_sec_press, "minutes")
+                .format();
+              record_sec_press2_time = moment(start_sec_press2_time)
+                .add(item_data.record_sec_press2, "minutes")
+                .format();
+              console.log(
+                `%c Case: block_qty = 6 | ` + end_sec_press_time,
+                "color: red"
+              );
+              break;
+            case 3:
+              console.log("case Block qty = 3 | " + count);
+              start_time = moment(lotList[totalRow - 2].end_prim_press_time)
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress -
+                    item_data.end_extruder -
+                    item_data.kneader,
+                  "minutes"
+                )
+                .format();
+              kneader_time = moment(lotList[totalRow - 2].end_prim_press_time)
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress -
+                    item_data.end_extruder,
+                  "minutes"
+                )
+                .format();
+              end_extruder_time = moment(
+                lotList[totalRow - 2].end_prim_press_time
+              )
+                .add(
+                  item_data.extra1 -
+                    item_data.start_prim_press -
+                    item_data.end_prepress,
+                  "minutes"
+                )
+                .format();
+              end_prepress_time =
+                start_prim_press_time =
+                end_prim_press_time =
+                steam_in_time =
+                start_sec_press_time =
+                start_sec_press2_time =
+                cooling_time =
+                record_sec_press_time =
+                record_sec_press2_time =
+                end_sec_press_time =
+                  null;
+              console.log(
+                `%c Case: block_qty = 3 | ` + end_sec_press_time,
+                "color: pink"
+              );
+              break;
+            case 0:
+              start_time = kneader_time = end_extruder_time = null;
+              if (block_temp === 3) {
+                console.log("case Block qty 0 Temp 3 | " + count);
+                end_prepress_time = moment(
+                  lotList[totalRow - 1].end_prim_press_time
+                )
+                  .add(item_data.extra1 - item_data.start_prim_press, "minutes")
+                  .format();
+                start_prim_press_time = moment(
+                  lotList[totalRow - 1].end_prim_press_time
+                )
+                  .add(item_data.extra1, "minutes")
+                  .format();
+              } else if (block_temp === 6) {
+                console.log("case Block qty 0 Temp 6 | " + count);
+                end_prepress_time = moment(
+                  lotList[totalRow - 2].end_prim_press_time
+                )
+                  .add(item_data.extra1 - item_data.start_prim_press, "minutes")
+                  .format();
+                start_prim_press_time = moment(
+                  lotList[totalRow - 2].end_prim_press_time
+                )
+                  .add(item_data.extra1, "minutes")
+                  .format();
+              }
+              end_prim_press_time = moment(start_prim_press_time)
+                .add(item_data.end_prim_press, "minutes")
+                .format();
+              start_sec_press_time = moment(end_prim_press_time)
+                .add(item_data.start_sec_press, "minutes")
+                .format();
+              steam_in_time = moment(start_sec_press_time)
+                .add(-item_data.steam_in, "minutes")
+                .format();
+              start_sec_press2_time = moment(start_sec_press_time)
+                .add(item_data.start_sec_press2, "minutes")
+                .format();
+              end_sec_press_time = moment(start_sec_press_time)
+                .add(item_data.end_sec_press, "minutes")
+                .format();
+              cooling_time = moment(end_sec_press_time)
+                .add(-item_data.cooling, "minutes")
+                .format();
+              record_sec_press_time = moment(start_sec_press_time)
+                .add(item_data.record_sec_press, "minutes")
+                .format();
+              record_sec_press2_time = moment(start_sec_press2_time)
+                .add(item_data.record_sec_press2, "minutes")
+                .format();
+              console.log(
+                `%c Case: block_qty = 0 | ` + end_sec_press_time,
+                "color: orange"
+              );
+              break;
+          }
         }
+
+        // Set lastDateTime
+        if (!end_sec_press_time) {
+          lastDateTime = end_extruder_time;
+        } else {
+          lastDateTime = end_sec_press_time;
+        }
+        console.log("lastDateTime: " + lastDateTime);
 
         let lotObj = {
           item: selectedItemId,
@@ -189,17 +398,15 @@ function CreateTime() {
           cooling_time: cooling_time,
           record_sec_press_time: record_sec_press_time,
           record_sec_press2_time: record_sec_press2_time,
-          work_date: moment(lastWorkDay).format("DD/MM/YYYY"),
+          workday: moment(lastWorkDay).format(),
           flag: totalRow,
         };
-
         lotList.push(lotObj);
+
         i++;
         count++;
         totalRow += 1;
-        console.log(totalRow);
       }
-      // let lastDateTime = moment(tempStartTime).format();
     }
     console.log(lotList);
     setpreviewList(lotList);
@@ -217,6 +424,35 @@ function CreateTime() {
         {process === "Invalid date" ? "null" : process}
       </td>
     );
+  }
+
+  async function handleCreateLot() {
+    let i = 0,
+      tempdate = moment(startTime).format("DD/MM/YYYY");
+    const res = await axios.get(variables.API_URL + "lot");
+
+    while (i <= workDays) {
+      tempdate = moment(startTime).add(i, "days").format("DD/MM/YYYY");
+      let lotExist = res.data.some(
+        (lot) => moment(lot.workday).format("DD/MM/YYYY") === tempdate
+      );
+      if (lotExist) {
+        alert("Lot วันที่ :" + tempdate + "มีอยู่แล้ว!");
+        return;
+      }
+      i++;
+    }
+    alert("ready to create")
+        // previewList.map((lotObj) => {
+        //   axios
+        //     .post(variables.API_URL + "lot", lotObj, {
+        //       onUploadProgress: (progressEvent) => {
+        //         const progress = (progressEvent.loaded / progressEvent.total)
+        //         console.log(progress)
+        //       },
+        //     })
+        //     .then((res) => alert(res.data));
+        // });
   }
 
   return (
@@ -266,6 +502,13 @@ function CreateTime() {
           className="p-3 border rounded-lg border-blue-600 text-blue-500 hover:bg-blue-500 hover:border-blue-500 hover:text-white"
         >
           ดูข้อมูล
+        </button>
+
+        <button
+          onClick={() => handleCreateLot()}
+          className="p-3 border rounded-lg border-yellow-600 text-yellow-500 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white"
+        >
+          วางแผน
         </button>
       </div>
 
@@ -329,7 +572,7 @@ function CreateTime() {
               .sort((a, b) => a.flag - b.flag)
               .filter(
                 (time) =>
-                  time.work_date ===
+                  moment(time.workday).format("DD/MM/YYYY") ===
                   moment(selectedDateTime).format("DD/MM/YYYY")
               )
               .map((time, idx) => (
