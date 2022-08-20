@@ -54,7 +54,7 @@ function Navigation() {
             <Link to="/user">
               <li>จัดการผู้ใช้</li>
             </Link>
-            <Link to="/admin-formular">
+            <Link to="/admin-formula">
               <li>จัดการสูตรการผลิต</li>
             </Link>
           </>

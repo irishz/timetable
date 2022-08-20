@@ -3,12 +3,9 @@ from rest_framework.renderers import JSONRenderer
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
-from TimeApp.models import Item, Lot
-from TimeApp.serializers import ItemSerializer, LotSerializer, FormularSerializer
+from TimeApp.models import Item, Lot, Formula
+from TimeApp.serializers import ItemSerializer, LotSerializer, MyTokenObtainPairSerailizer, FormulaSerializer
 from rest_framework_simplejwt.views import TokenObtainPairView
-
-from .models import Formular
-from .serializers import FormularSerializer, MyTokenObtainPairSerailizer
 
 class ItemAPI(APIView):
     @csrf_exempt
@@ -115,15 +112,15 @@ class LotItemAPI(APIView):
 
         return Response({'msg': 'ลบข้อมูลสำเร็จ'})
 
-class FormularAPI(APIView):
+class FormulaAPI(APIView):
     @csrf_exempt
     def get(self, request):
-        formular = Formular.objects.all()
-        serializer = FormularSerializer(formular, many=True)
+        formula = Formula.objects.all()
+        serializer = FormulaSerializer(formula, many=True)
         return Response(serializer.data)
     def post(self, request):
         data = request.data
-        serializer = FormularSerializer(data=data)
+        serializer = FormulaSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
             res = {'msg': 'สร้างสูตรการผลิตสำเร็จ'}
@@ -134,23 +131,23 @@ class FormularAPI(APIView):
         json_data = JSONRenderer().render(serializer.errors)
         return HttpResponse(json_data, content_type="application/json")
 
-class FormularDetailAPI(APIView):
+class FormulaDetailAPI(APIView):
     @csrf_exempt
     def get_object(self, id):
         try:
-            return Formular.objects.get(id=id)
-        except Formular.DoesNotExist:
+            return Formula.objects.get(id=id)
+        except Formula.DoesNotExist:
             res ={'msg': 'ไม่พบข้อมูล'}
             return HttpResponse(res, content_type="application/json")
 
     def get(self, request, id):
-        formular = self.get_object(id)
-        serializer = FormularSerializer(formular)
+        formula = self.get_object(id)
+        serializer = FormulaSerializer(formula)
         return Response(serializer.data)
 
     def put(self, request, id, format=None):
-        formular = self.get_object(id)
-        serializer = FormularSerializer(formular, data=request.data)
+        formula = self.get_object(id)
+        serializer = FormulaSerializer(formula, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response({'msg': 'อัพเดทข้อมูลสำเร็จ'})

@@ -1,9 +1,9 @@
 import React from "react";
 import { useParams } from "react-router-dom";
 
-function FormularEdit() {
+function FormulaEdit() {
   const {id} = useParams();
-  return <div>FormularEdit : {id}</div>;
+  return <div>FormulaEdit : {id}</div>;
 }
 
-export default FormularEdit;
+export default FormulaEdit;

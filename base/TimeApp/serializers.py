@@ -1,8 +1,6 @@
 from rest_framework import serializers
-from TimeApp.models import Item, Lot
+from TimeApp.models import Item, Lot, Formula
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
-
-from .models import Formular
 
 class MyTokenObtainPairSerailizer(TokenObtainPairSerializer):
     @classmethod
@@ -18,17 +16,15 @@ class LotSerializer(serializers.ModelSerializer):
         model = Lot
         fields = '__all__'
 
-class FormularSerializer(serializers.ModelSerializer):
+class FormulaSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Formular
+        model = Formula
         fields = "__all__"
 
 class ItemSerializer(serializers.ModelSerializer):
-    formulars = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    formula = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Item
-        fields = ['item_id', 'item', 'init', 'kneader', 'end_extruder', 'end_prepress', 'start_prim_press', 'end_prim_press',
-                  'steam_in', 'start_sec_press', 'start_sec_press2', 'cooling', 'record_sec_press', 'record_sec_press2',
-                  'end_sec_press', 'extra1', 'formulars']
+        fields = "__all__"
         extra_kwargs = {"item": {"error_messages": {"required": "กรุณาเลือก Item!"}}}

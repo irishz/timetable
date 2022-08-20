@@ -3,17 +3,15 @@ import moment from "moment";
 import "moment/locale/th";
 import axios from "axios";
 import { variables } from "../../Variables";
-import ItemFormular from "./ItemFormular";
+import ItemFormular from "./ItemFormula";
 import {
   Box,
   Button,
-  Center,
   Container,
   Flex,
   IconButton,
   Select,
   Table,
-  TableCaption,
   TableContainer,
   Tbody,
   Td,
@@ -62,7 +60,7 @@ function Time() {
   }
 
   useEffect(() => {
-    axios.get(variables.API_URL + "lotitem/" + selectedItem).then((res) => {
+    axios.get(variables.API_URL + `lotitem/${selectedItem}`).then((res) => {
       settimeDisplay(res.data);
     });
   }, [selectedItem]);
@@ -73,7 +71,7 @@ function Time() {
     time_process,
     time_workday,
     process_name,
-    process_name_eng,
+    process_name_eng
   ) {
     return (
       <Td
@@ -85,22 +83,47 @@ function Time() {
               lotTime: time_process,
               workday: time_workday,
               process_name: process_name,
-              process_name_eng: process_name_eng
+              process_name_eng: process_name_eng,
             };
             setlotEditObj(lotObj);
             onOpen();
           }
         }}
-        _hover={
-          process === "Invalid date"
-            ? null
-            : { bgColor: "teal", color: "white" }
+        _hover={process === "Invalid date" ? null : { bgColor: "orange" }}
+        bgColor={
+          checkCurrTime(time_process)
+            ? "teal"
+            : process === "Invalid date"
+            ? "red.600"
+            : null
         }
-        className={
-          process === "Invalid date" ? "bg-red-600 text-red-600" : null
-        }
+        textColor={process === "Invalid date" ? "red.600" : null}
       >
         {process === "Invalid date" ? "null" : process}
+      </Td>
+    );
+  }
+
+  function renderTableRowSpan(time) {
+    return (
+      <Td
+        rowSpan={2}
+        bgColor={checkCurrTime(time) ? "teal" : null}
+        _hover={{ bgColor: "orange" }}
+        onClick={() => {}}
+      >
+        {moment(time).format("HH:mm")}
+      </Td>
+    );
+  }
+
+  function renderTableRow(time) {
+    return (
+      <Td
+        bgColor={checkCurrTime(time) ? "teal" : null}
+        _hover={{ bgColor: "orange" }}
+      >
+        {moment(time).format("HH:mm")}
       </Td>
     );
   }
@@ -174,8 +197,15 @@ function Time() {
         />
       </Box>
 
-      <TableContainer>
+      <TableContainer
+        mt={3}
+        border="solid"
+        borderWidth={1}
+        borderColor="gray.300"
+        borderRadius={5}
+      >
         <Table
+          p={2}
           display="block"
           variant="simple"
           maxWidth="100%"
@@ -191,21 +221,21 @@ function Time() {
               <Th textAlign="center" p={1}>
                 Run No.
               </Th>
-              <Th>เครื่อง</Th>
-              <Th>เริ่มเดินงาน</Th>
-              <Th>เวลาผสมเสร็จ</Th>
-              <Th>ออกจากเอ็กทรูดเดอร์ [Extruder]</Th>
-              <Th>ออกจากพรีเพลส [Pre-Press]</Th>
-              <Th>เริ่มอบที่ไพรมารี่ เพลส [Primary Press]</Th>
-              <Th>ออกจากไพรมารี่ เพลส [Primary Press]</Th>
-              <Th>กดสตีมอิน Steam in</Th>
-              <Th>เริ่มอบที่ เซกันดารี่ เพลส[Secondary Press]</Th>
-              <Th>เริ่มอบรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]</Th>
-              <Th>คูลลิ่ง[Cooling]</Th>
-              <Th>จดอุณภูมิรอบที่ 1 เซกันดารี่ เพลส[Secondary Press]</Th>
-              <Th>จดอุณภูมิรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]</Th>
-              <Th>ออกจาก เซกันดารี่ เพลส[Secondary Press]</Th>
-              <Th>หมายเหตุ</Th>
+              <Th textAlign="center" p={1}>เครื่อง</Th>
+              <Th textAlign="center" p={1}>เริ่มเดินงาน</Th>
+              <Th textAlign="center" p={1}>เวลาผสมเสร็จ</Th>
+              <Th textAlign="center" p={1}>ออกจากเอ็กทรูดเดอร์ [Extruder]</Th>
+              <Th textAlign="center" p={1}>ออกจากพรีเพลส [Pre-Press]</Th>
+              <Th textAlign="center" p={1}>เริ่มอบที่ไพรมารี่ เพลส [Primary Press]</Th>
+              <Th textAlign="center" p={1}>ออกจากไพรมารี่ เพลส [Primary Press]</Th>
+              <Th textAlign="center" p={1}>กดสตีมอิน Steam in</Th>
+              <Th textAlign="center" p={1}>เริ่มอบที่ เซกันดารี่ เพลส[Secondary Press]</Th>
+              <Th textAlign="center" p={1}>เริ่มอบรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]</Th>
+              <Th textAlign="center" p={1}>คูลลิ่ง[Cooling]</Th>
+              <Th textAlign="center" p={1}>จดอุณภูมิรอบที่ 1 เซกันดารี่ เพลส[Secondary Press]</Th>
+              <Th textAlign="center" p={1}>จดอุณภูมิรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]</Th>
+              <Th textAlign="center" p={1}>ออกจาก เซกันดารี่ เพลส[Secondary Press]</Th>
+              <Th textAlign="center" p={1}>หมายเหตุ</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -240,7 +270,7 @@ function Time() {
                     time.id,
                     time.start_time,
                     time.workday,
-                    "เริ่มเดินงาน",
+                    "เริ่มเดินงาน"
                   )}
                   {renderCell(
                     moment(time.kneader_time).format("HH:mm"),
@@ -258,67 +288,29 @@ function Time() {
                   )}
                   {time.block_qty === 0 && time.block_temp === 3 ? (
                     <>
-                      <Td
-                        rowSpan={2}
-                        // ${
-                        // checkCurrTime(time.end_prepress_time)
-                        //   ? "bg-green-600"
-                        //   : null
-                      >
-                        {moment(time.end_prepress_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.start_prim_press_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.end_prim_press_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.steam_in_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.start_sec_press_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.start_sec_press2_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.cooling_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.record_sec_press_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.record_sec_press2_time).format("HH:mm")}
-                      </Td>
-                      <Td rowSpan={2}>
-                        {moment(time.end_sec_press_time).format("HH:mm")}
-                      </Td>
+                      {renderTableRowSpan(time.end_prepress_time)}
+                      {renderTableRowSpan(time.start_prim_press_time)}
+                      {renderTableRowSpan(time.end_prim_press_time)}
+                      {renderTableRowSpan(time.steam_in_time)}
+                      {renderTableRowSpan(time.start_sec_press_time)}
+                      {renderTableRowSpan(time.start_sec_press2_time)}
+                      {renderTableRowSpan(time.cooling_time)}
+                      {renderTableRowSpan(time.record_sec_press_time)}
+                      {renderTableRowSpan(time.record_sec_press2_time)}
+                      {renderTableRowSpan(time.end_sec_press_time)}
                     </>
                   ) : (idx > 5 && time.block_qty === 3) || idx === 2 ? null : (
                     <>
-                      <Td>{moment(time.end_prepress_time).format("HH:mm")}</Td>
-                      <Td>
-                        {moment(time.start_prim_press_time).format("HH:mm")}
-                      </Td>
-                      <Td>
-                        {moment(time.end_prim_press_time).format("HH:mm")}
-                      </Td>
-                      <Td>{moment(time.steam_in_time).format("HH:mm")}</Td>
-                      <Td>
-                        {moment(time.start_sec_press_time).format("HH:mm")}
-                      </Td>
-                      <Td>
-                        {moment(time.start_sec_press2_time).format("HH:mm")}
-                      </Td>
-                      <Td>{moment(time.cooling_time).format("HH:mm")}</Td>
-                      <Td>
-                        {moment(time.record_sec_press_time).format("HH:mm")}
-                      </Td>
-                      <Td>
-                        {moment(time.record_sec_press2_time).format("HH:mm")}
-                      </Td>
-                      <Td>{moment(time.end_sec_press_time).format("HH:mm")}</Td>
+                      {renderTableRow(time.end_prepress_time)}
+                      {renderTableRow(time.start_prim_press_time)}
+                      {renderTableRow(time.end_prim_press_time)}
+                      {renderTableRow(time.steam_in_time)}
+                      {renderTableRow(time.start_sec_press_time)}
+                      {renderTableRow(time.start_sec_press2_time)}
+                      {renderTableRow(time.cooling_time)}
+                      {renderTableRow(time.record_sec_press_time)}
+                      {renderTableRow(time.record_sec_press2_time)}
+                      {renderTableRow(time.end_sec_press_time)}
                     </>
                   )}
                 </Tr>

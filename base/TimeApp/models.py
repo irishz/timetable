@@ -20,16 +20,16 @@ class Item(models.Model):
     end_sec_press = models.IntegerField(default=0, blank=True, null=True)
     extra1 = models.IntegerField(default=0, blank=True, null=True)
 
-class Formular(models.Model):
+class Formula(models.Model):
     name = models.CharField(max_length=20, blank=True, null=True)
-    formular_no = models.IntegerField(default=0, blank=True, null=True)
+    formula_no = models.IntegerField(default=0, blank=True, null=True)
     chem_weighing = models.CharField(max_length=20, blank=True, null=True)
     hopper = models.CharField(max_length=20, blank=True, null=True)
     kneader = models.CharField(max_length=20, blank=True, null=True)
     extruder = models.CharField(max_length=20, blank=True, null=True)
     primary = models.CharField(max_length=20, blank=True, null=True)
     secondary = models.CharField(max_length=20, blank=True, null=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formulars", default=1)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formula", default=1)
 
 class Lot(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='items')

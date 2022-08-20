@@ -63,7 +63,7 @@ function EditTime(props) {
     lotFilteredList.map((lot) => {
       if (lot.id === props.lotEditObj.lotId) {
         console.log({ true: lot.id + "|" + props.lotEditObj.lotId });
-        
+
         return;
       }
       // Edit all time in lot
@@ -78,7 +78,10 @@ function EditTime(props) {
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay />
+      <ModalOverlay
+        bg="blackAlpha.300"
+        backdropFilter="blur(10px)"
+      />
       <ModalContent>
         <ModalHeader>
           <Text>
