@@ -1,7 +1,6 @@
 from django.db import models
 from datetime import datetime
 
-from django.forms import IntegerField
 
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
@@ -20,6 +19,17 @@ class Item(models.Model):
     record_sec_press2 = models.IntegerField(default=0, blank=True, null=True)
     end_sec_press = models.IntegerField(default=0, blank=True, null=True)
     extra1 = models.IntegerField(default=0, blank=True, null=True)
+
+class Formular(models.Model):
+    name = models.CharField(max_length=20, blank=True, null=True)
+    formular_no = models.IntegerField(default=0, blank=True, null=True)
+    chem_weighing = models.CharField(max_length=20, blank=True, null=True)
+    hopper = models.CharField(max_length=20, blank=True, null=True)
+    kneader = models.CharField(max_length=20, blank=True, null=True)
+    extruder = models.CharField(max_length=20, blank=True, null=True)
+    primary = models.CharField(max_length=20, blank=True, null=True)
+    secondary = models.CharField(max_length=20, blank=True, null=True)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formulars", default=1)
 
 class Lot(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='items')

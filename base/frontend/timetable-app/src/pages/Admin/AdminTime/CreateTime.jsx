@@ -1,7 +1,35 @@
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Stack,
+  useDisclosure,
+  Text,
+  Select,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  NumberIncrementStepper,
+  NumberDecrementStepper,
+  Box,
+  Flex,
+  Progress,
+  Center,
+  Input,
+} from "@chakra-ui/react";
 import axios from "axios";
 import moment from "moment";
+import "moment/locale/th";
 import React, { useEffect, useState } from "react";
-import { variables } from "../../Variables";
+import { variables } from "../../../Variables";
+import { CheckIcon, CloseIcon } from "@chakra-ui/icons";
+import { BsCheck2Circle } from "react-icons/bs";
+moment.locale("th");
 
 function CreateTime() {
   const [itemList, setitemList] = useState([]);
@@ -10,10 +38,12 @@ function CreateTime() {
   const [selectedDateTime, setselectedDateTime] = useState(null);
   const [startTime, setstartTime] = useState(null);
   const [workDays, setworkDays] = useState(1);
+  const [progress, setprogress] = useState(0);
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   useEffect(() => {
     axios.get(variables.API_URL + "item").then((res) => {
-      // console.log(res.data);
+      // console.table(res.data);
       setitemList(res.data);
     });
   }, []);
@@ -52,7 +82,7 @@ function CreateTime() {
     let item_data = itemList.find((item) => (item.item_id = selectedItemId));
     let lastWorkDay;
     let countWorkDays = 0;
-    // Loop work days
+    // ANCHOR Loop work days
     let totalRow = 0;
 
     while (countWorkDays < workDays) {
@@ -61,21 +91,28 @@ function CreateTime() {
         batch_no = 1,
         run_no = 0,
         mc_no = 0;
-      let tempStartTime = moment(startTime)
-        .add(countWorkDays, "day")
-        .set("minutes", 15)
-        .format();
+      let tempStartTime;
+      if (countWorkDays === 0) {
+        tempStartTime = moment(startTime).add(countWorkDays, "day").format();
+      } else {
+        tempStartTime = moment(startTime)
+          .add(countWorkDays, "day")
+          .set("hours", 8)
+          .set("minutes", 15)
+          .format();
+      }
       lastWorkDay = moment(tempStartTime)
         .add(12, "hours")
         .add(45, "minutes")
         .format();
-      console.log("Start Time : " + tempStartTime);
-      console.log("Last Time : " + lastWorkDay);
+      // console.log("Start Time : " + tempStartTime);
+      // console.log("Last Time : " + lastWorkDay);
 
       let lastDateTime = tempStartTime;
 
       countWorkDays += 1;
 
+      //ANCHOR Loop data lot list
       while (moment(lastDateTime).diff(moment(lastWorkDay), "hour") < 0) {
         // Batch Number
         if (i % 2 === 1) {
@@ -118,7 +155,7 @@ function CreateTime() {
             mc_no = count;
           }
           // Block Quantity
-          console.log(count);
+          // console.log(count);
           switch (count) {
             case 1:
             case 5:
@@ -188,14 +225,14 @@ function CreateTime() {
           record_sec_press2_time = moment(start_sec_press2_time)
             .add(item_data.record_sec_press2, "minutes")
             .format();
-          console.log(
-            `%c Case: i = 1 | ` + end_sec_press_time + " -> " + count,
-            "color: red"
-          );
+          // console.log(
+          //   `%c Case: i = 1 | ` + end_sec_press_time + " -> " + count,
+          //   "color: red"
+          // );
         } else {
           switch (block_qty) {
             case 6:
-              console.log("case Block Qty = 6 | " + count);
+              // console.log("case Block Qty = 6 | " + count);
               start_time = moment(lotList[totalRow - 1].end_prim_press_time)
                 .add(
                   item_data.extra1 -
@@ -259,13 +296,13 @@ function CreateTime() {
               record_sec_press2_time = moment(start_sec_press2_time)
                 .add(item_data.record_sec_press2, "minutes")
                 .format();
-              console.log(
-                `%c Case: block_qty = 6 | ` + end_sec_press_time,
-                "color: red"
-              );
+              // console.log(
+              //   `%c Case: block_qty = 6 | ` + end_sec_press_time,
+              //   "color: red"
+              // );
               break;
             case 3:
-              console.log("case Block qty = 3 | " + count);
+              // console.log("case Block qty = 3 | " + count);
               start_time = moment(lotList[totalRow - 2].end_prim_press_time)
                 .add(
                   item_data.extra1 -
@@ -306,15 +343,15 @@ function CreateTime() {
                 record_sec_press2_time =
                 end_sec_press_time =
                   null;
-              console.log(
-                `%c Case: block_qty = 3 | ` + end_sec_press_time,
-                "color: pink"
-              );
+              // console.log(
+              //   `%c Case: block_qty = 3 | ` + end_sec_press_time,
+              //   "color: pink"
+              // );
               break;
             case 0:
               start_time = kneader_time = end_extruder_time = null;
               if (block_temp === 3) {
-                console.log("case Block qty 0 Temp 3 | " + count);
+                // console.log("case Block qty 0 Temp 3 | " + count);
                 end_prepress_time = moment(
                   lotList[totalRow - 1].end_prim_press_time
                 )
@@ -326,7 +363,7 @@ function CreateTime() {
                   .add(item_data.extra1, "minutes")
                   .format();
               } else if (block_temp === 6) {
-                console.log("case Block qty 0 Temp 6 | " + count);
+                // console.log("case Block qty 0 Temp 6 | " + count);
                 end_prepress_time = moment(
                   lotList[totalRow - 2].end_prim_press_time
                 )
@@ -362,21 +399,21 @@ function CreateTime() {
               record_sec_press2_time = moment(start_sec_press2_time)
                 .add(item_data.record_sec_press2, "minutes")
                 .format();
-              console.log(
-                `%c Case: block_qty = 0 | ` + end_sec_press_time,
-                "color: orange"
-              );
+              // console.log(
+              //   `%c Case: block_qty = 0 | ` + end_sec_press_time,
+              //   "color: orange"
+              // );
               break;
           }
         }
 
-        // Set lastDateTime
+        // ANCHOR Set lastDateTime
         if (!end_sec_press_time) {
           lastDateTime = end_extruder_time;
         } else {
           lastDateTime = end_sec_press_time;
         }
-        console.log("lastDateTime: " + lastDateTime);
+        // console.log("lastDateTime: " + lastDateTime);
 
         let lotObj = {
           item: selectedItemId,
@@ -431,6 +468,7 @@ function CreateTime() {
       tempdate = moment(startTime).format("DD/MM/YYYY");
     const res = await axios.get(variables.API_URL + "lot");
 
+    // Check work date is already existed in lot list
     while (i <= workDays) {
       tempdate = moment(startTime).add(i, "days").format("DD/MM/YYYY");
       let lotExist = res.data.some(
@@ -442,29 +480,41 @@ function CreateTime() {
       }
       i++;
     }
-    alert("ready to create")
-        // previewList.map((lotObj) => {
-        //   axios
-        //     .post(variables.API_URL + "lot", lotObj, {
-        //       onUploadProgress: (progressEvent) => {
-        //         const progress = (progressEvent.loaded / progressEvent.total)
-        //         console.log(progress)
-        //       },
-        //     })
-        //     .then((res) => alert(res.data));
-        // });
+
+    let count = 0;
+    previewList.map((lotObj) => {
+      axios
+        .post(variables.API_URL + "lot", lotObj, {
+          onUploadProgress: (ProgressEvent) => {
+            //TODO Create upload progress bar
+            count++;
+            const progressPercent = (count / previewList.length) * 100;
+            setprogress(progressPercent);
+          },
+        })
+        .then(() => {
+          setTimeout(() => {
+            onClose();
+            //Set to initial value
+            setselectedItemId(null);
+            setselectedDateTime(null);
+            setworkDays(1);
+            setprogress(0);
+          }, 3000);
+        });
+    });
   }
 
   return (
     <div className="mx-5">
-      {/* Input Form */}
+      {/* ANCHOR Input Form */}
       <div className="my-3 flex justify-around">
         <div>
-          <select
+          <Select
             name="item"
             id="item"
             onChange={(e) => setselectedItemId(e.target.value)}
-            className="border-2 rounded-md border-gray-600"
+            color="teal"
           >
             <option>เลือก item</option>
             {itemList.map((item) => (
@@ -472,66 +522,77 @@ function CreateTime() {
                 {item.item}
               </option>
             ))}
-          </select>
+          </Select>
           <p>{selectedItemId}</p>
         </div>
 
-        <div>
-          <input
+        <Box>
+          <Input
             type="datetime-local"
-            className="border-2 rounded-md border-gray-600"
             onChange={(e) => handleDateTimeChange(e)}
+            colorScheme="teal"
           />
           <p>{moment(startTime).format("DD/MM/YYYY HH:mm")}</p>
-        </div>
+        </Box>
 
-        <div>
-          <input
-            onChange={(e) => setworkDays(e.target.value)}
-            type="number"
-            className="border-2 rounded-md border-gray-600"
+        <Box>
+          <NumberInput
+            defaultValue={1}
             min={1}
             max={6}
+            size="sm"
+            marginX={3}
+            allowMouseWheel
             value={workDays}
-          />
+            onChange={(e) => setworkDays(e)}
+          >
+            <NumberInputField />
+            <NumberInputStepper>
+              <NumberIncrementStepper />
+              <NumberDecrementStepper />
+            </NumberInputStepper>
+          </NumberInput>
           <p>{workDays}</p>
-        </div>
+        </Box>
 
-        <button
+        <Button
+          variant="solid"
+          colorScheme="orange"
           onClick={() => handlePreviewClick()}
-          className="p-3 border rounded-lg border-blue-600 text-blue-500 hover:bg-blue-500 hover:border-blue-500 hover:text-white"
         >
           ดูข้อมูล
-        </button>
+        </Button>
 
-        <button
-          onClick={() => handleCreateLot()}
-          className="p-3 border rounded-lg border-yellow-600 text-yellow-500 hover:bg-yellow-500 hover:border-yellow-500 hover:text-white"
-        >
+        <Button variant="solid" colorScheme="red" onClick={onOpen}>
           วางแผน
-        </button>
+        </Button>
       </div>
 
-      {/* SelectedDate  */}
-      <div className="my-1 flex justify-between">
-        <button
-          className="p-1 rounded-md bg-green-600 text-white"
+      {/* ANCHOR SelectedDate  */}
+      <Flex marginY={1} justifyContent="space-between">
+        <Button
+          colorScheme="teal"
           onClick={() => handleSelectDateChange("prev")}
         >
           วันก่อนหน้า
-        </button>
-        <p className="font-bold text-gray-600">
+        </Button>
+        <Text color="teal" fontSize="18">
           {moment(selectedDateTime).format("DD/MM/YYYY")}
-        </p>
-        <button
-          className="p-1 rounded-md bg-green-600 text-white"
+        </Text>
+        <Button
+          colorScheme="teal"
           onClick={() => handleSelectDateChange("next")}
         >
           วันถัดไป
-        </button>
+        </Button>
+      </Flex>
+
+      {/* ANCHOR Modal Progress */}
+      <div className="flex justify-center">
+        {progress > 0 ? <p>{progress}%</p> : null}
       </div>
 
-      {/* Preview Table */}
+      {/* ANCHOR Preview Table */}
       {previewList.length > 0 ? (
         <table className="table-fixed h-24">
           <thead className="text-center font-medium text-sm border-t border border-gray-600">
@@ -576,7 +637,7 @@ function CreateTime() {
                   moment(selectedDateTime).format("DD/MM/YYYY")
               )
               .map((time, idx) => (
-                <tr key={idx}>
+                <tr key={time.flag}>
                   {/* render batch number */}
                   {(idx + 1) % 2 === 1 ? (
                     <td rowSpan={2} className="table-cell">
@@ -675,6 +736,63 @@ function CreateTime() {
           </tbody>
         </table>
       ) : null}
+
+      {/* ANCHOR Confirm Modal */}
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>ยืนยันการวางแผน</ModalHeader>
+          <ModalCloseButton />
+
+          <ModalBody>
+            {progress === 100 ? (
+              <Center>
+                <Flex direction="column" align="center">
+                  <BsCheck2Circle size={36} color="green" />
+                  <Text color="green">สร้างข้อมูลสำเร็จ</Text>
+                </Flex>
+              </Center>
+            ) : progress > 0 ? (
+              <Progress hasStripe value={progress} max={100} />
+            ) : (
+              <>
+                <Text>
+                  <strong>วันที่เริ่มต้น</strong> :{" "}
+                  {moment(startTime).format("LLLL")}
+                </Text>
+                <Text>
+                  <strong>วันที่สิ้นสุด</strong> :{" "}
+                  {moment(startTime)
+                    .add(workDays - 1, "days")
+                    .add(12, "hours")
+                    .add(45, "minutes")
+                    .format("LLLL")}
+                </Text>
+              </>
+            )}
+          </ModalBody>
+          {progress !== 0 ? null : (
+            <ModalFooter>
+              <Stack direction="row">
+                <Button
+                  colorScheme="teal"
+                  onClick={() => handleCreateLot()}
+                  leftIcon={<CheckIcon />}
+                >
+                  ตกลง
+                </Button>
+                <Button
+                  colorScheme="red"
+                  onClick={onClose}
+                  leftIcon={<CloseIcon />}
+                >
+                  ยกเลิก
+                </Button>
+              </Stack>
+            </ModalFooter>
+          )}
+        </ModalContent>
+      </Modal>
     </div>
   );
 }
