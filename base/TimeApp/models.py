@@ -29,10 +29,9 @@ class Formula(models.Model):
     extruder = models.CharField(max_length=20, blank=True, null=True)
     primary = models.CharField(max_length=20, blank=True, null=True)
     secondary = models.CharField(max_length=20, blank=True, null=True)
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formula", default=1)
 
 class Lot(models.Model):
-    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name='items')
+    formula = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formula", default=1)
     batch_no = models.IntegerField(default=0, blank=True, null=True)
     run_no = models.IntegerField(default=0, blank=True, null=True)
     mc_no = models.IntegerField(default=0, blank=True, null=True)

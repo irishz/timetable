@@ -51,7 +51,7 @@ function AdminFormular() {
           <Button
             colorScheme="orange"
             leftIcon={<AddIcon />}
-            onClick={() => navigate("formula/new")}
+            onClick={() => navigate("/admin-formula/new")}
           >
             เพิ่มสูตร
           </Button>

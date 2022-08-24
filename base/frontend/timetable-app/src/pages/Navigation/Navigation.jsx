@@ -4,6 +4,7 @@ import jwtDecode from "jwt-decode";
 import AuthContext from "../../Context/AuthContext";
 import {
   Avatar,
+  Box,
   Divider,
   Flex,
   Menu,
@@ -31,6 +32,9 @@ function Navigation() {
     const user_data = jwtDecode(authCtx.userToken);
     setuserData(user_data);
     // navigate("../", { replace: true });
+    return () => {
+      setuserData([])
+    }
   }, []);
 
   return (
@@ -41,25 +45,25 @@ function Navigation() {
       color={colorMode === "light" ? "white" : "teal"}
       shadow="md"
     >
-      <ul className="px-2 py-3 flex gap-2">
+      <Box className="px-2 py-3 flex gap-2">
         <Link to="/time">
-          <li>ตารางเวลา</li>
+          <Text>ตารางเวลา</Text>
         </Link>
         {/* Link for Admin */}
         {userData?.is_staff ? (
           <>
             <Link to="/admin-time/new">
-              <li>จัดการตารางเวลา</li>
+              <Text>จัดการตารางเวลา</Text>
             </Link>
             <Link to="/user">
-              <li>จัดการผู้ใช้</li>
+              <Text>จัดการผู้ใช้</Text>
             </Link>
             <Link to="/admin-formula">
-              <li>จัดการสูตรการผลิต</li>
+              <Text>จัดการสูตรการผลิต</Text>
             </Link>
           </>
         ) : null}
-      </ul>
+      </Box>
       <Flex alignItems="center" gap={2}>
         <Text>ยินดีต้อนรับคุณ: {userData?.username}</Text>
         <Menu closeOnSelect={false}>

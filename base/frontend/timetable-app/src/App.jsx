@@ -22,7 +22,7 @@ function App() {
       <AuthContext.Provider value={{ setuserToken: setuserToken, userToken }}>
         <Navigation />
         <Routes>
-          {/* <Route path="/" element={<Time />} /> */}
+          <Route path="/" element={<Time />} />
           <Route path="/time" element={<Time />} />
           <Route path="/admin-time/new" element={<CreateTime />} />
           <Route path="/admin-formula">
@@ -30,7 +30,6 @@ function App() {
             <Route path=":id" element={<FormulaEdit />} />
             <Route path="new" element={<FormulaCreate />} />
           </Route>
-          <Route path="/test" element={<Test />}/>
           <Route path="*" element={<NotFound />} />
         </Routes>
       </AuthContext.Provider>

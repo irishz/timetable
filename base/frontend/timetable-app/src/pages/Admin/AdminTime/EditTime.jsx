@@ -13,16 +13,21 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import moment from "moment";
 import axios from "axios";
 import { variables } from "../../../Variables";
 import processList from "./ProcesssList";
+import { CheckCircleIcon } from "@chakra-ui/icons";
 
 function EditTime(props) {
   const [newTime, setnewTime] = useState("");
   const [lotList, setlotList] = useState([]);
   const [lotFilteredList, setlotFilteredList] = useState([]);
+  const [updateProgress, setupdateProgress] = useState(0);
+
+  const toast = useToast();
 
   useEffect(() => {
     let tempList;
@@ -45,12 +50,10 @@ function EditTime(props) {
         .set("minutes", splitStr[1])
         .format();
 
-      axios
-        .get(variables.API_URL + "lot/" + props.lotEditObj.lotId)
-        .then((res) => console.log(res.data));
+      // axios
+      //   .get(variables.API_URL + "lot/" + props.lotEditObj.lotId)
+      //   .then((res) => console.log(res.data));
     }
-
-    props.onClose();
 
     timeDiff = moment(newDateTime).diff(props.lotEditObj.lotTime, "minutes");
     //log data retrive that retrive from Time.jsx
@@ -60,28 +63,72 @@ function EditTime(props) {
       diff: timeDiff,
     });
 
-    lotFilteredList.map((lot) => {
-      if (lot.id === props.lotEditObj.lotId) {
-        console.log({ true: lot.id + "|" + props.lotEditObj.lotId });
+    // Filter lot flag >= selected edit lot flag
+    let updateProgress = 0;
+    lotFilteredList
+      .filter((data) => data.flag >= props.lotEditObj?.lotFlag)
+      .map((lot) => {
+        // Find process in first lot edit
+        if (lot.id === props.lotEditObj.lotId) {
+          const processId = processList.find(
+            (data) => data.process === props.lotEditObj?.process_name_eng
+          );
+          const processListFiltered = processList.filter(
+            (data) => data.id >= processId.id
+          );
 
-        return;
-      }
-      // Edit all time in lot
-      let editObj = {
-        start_time: moment(lot.start_time).add(timeDiff, "minutes").format(),
-        cooling_time: moment(lot.start_time).add(timeDiff, "minutes").format(),
-      };
-      console.log(editObj);
-      // axios.put(variables.API_URL + 'lot/' + lot.id)
+          let tmpArr = processListFiltered.map((data) => data.process);
+
+          let updLotObj = Object.fromEntries(
+            Object.entries(lot).filter(([data]) => tmpArr.includes(data))
+          );
+
+          Object.keys(updLotObj).forEach(
+            (key) =>
+              (updLotObj[key] = moment(updLotObj[key])
+                .add(timeDiff, "minutes")
+                .format())
+          );
+          Object.assign(updLotObj, {
+            item: lot.item,
+          });
+
+          console.log({ id: lot.id, timeData: updLotObj });
+          axios.put(variables.API_URL + `lot/${lot.id}`, updLotObj, {
+            onUploadProgress: () => {
+              props.setlotUpdated(true);
+            },
+          });
+          return;
+        }
+
+        // Edit all time in lot
+        let restLot = Object.fromEntries(
+          Object.entries(lot).filter((data) => data[0].includes("time")) //Filter object key contain "time" only
+        );
+
+        Object.keys(restLot).forEach(
+          (key) => moment(restLot[key]).add(timeDiff, "minutes").format() //update new time to each value in object
+        );
+        Object.assign(restLot, { item: lot.item });
+        console.log(restLot);
+        axios.put(variables.API_URL + `lot/${lot.id}`, restLot);
+      });
+    //Alert update
+    toast({
+      title: "อัพเดทข้อมูลสำเร็จ",
+      status: "success",
+      duration: 3000,
+      isClosable: true,
+      icon: <CheckCircleIcon alignSelf="center" />,
     });
+
+    props.onClose();
   }
 
   return (
     <Modal isOpen={props.isOpen} onClose={props.onClose}>
-      <ModalOverlay
-        bg="blackAlpha.300"
-        backdropFilter="blur(10px)"
-      />
+      <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
       <ModalContent>
         <ModalHeader>
           <Text>
