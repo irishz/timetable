@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useState } from "react";
+import React, { useContext, useEffect, useLayoutEffect, useState } from "react";
 import moment from "moment";
 import "moment/locale/th";
 import axios from "axios";
@@ -26,8 +26,11 @@ import {
 } from "@chakra-ui/react";
 import EditTime from "../Admin/AdminTime/EditTime";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import AuthContext from "../../Context/AuthContext";
+import jwtDecode from "jwt-decode";
 
 function Time() {
+  const authCtx = useContext(AuthContext);
   const [timeDisplay, settimeDisplay] = useState([]);
   const [itemList, setitemList] = useState([]);
   const [currTime, setcurrTime] = useState(moment().format());
@@ -40,7 +43,7 @@ function Time() {
 
   useLayoutEffect(() => {
     axios.get(variables.API_URL + "item").then((res) => {
-      // console.log(res.data);
+      console.log(res.data);
       setitemList(res.data);
     });
   }, []);
@@ -61,6 +64,33 @@ function Time() {
       return;
     }
     setselectedDate(moment().format());
+  }
+
+  function handleTableDataClick(
+    lot_id,
+    time,
+    workday,
+    process_name,
+    process_name_eng,
+    flag
+  ) {
+    {
+      let lotObj = {
+        lotId: lot_id,
+        lotTime: time,
+        workday: workday,
+        process_name: process_name,
+        process_name_eng: process_name_eng,
+        lotFlag: flag,
+      };
+      setlotEditObj(lotObj);
+
+      const user_data = jwtDecode(authCtx.userToken);
+      console.log(user_data.is_staff);
+      if (user_data.is_staff) {
+        onOpen();
+      }
+    }
   }
 
   useEffect(() => {
@@ -89,16 +119,14 @@ function Time() {
         onClick={() => {
           if (process !== "Invalid date") {
             //Open Modal
-            let lotObj = {
-              lotId: lot_id,
-              lotTime: time_process,
-              workday: time_workday,
-              process_name: process_name,
-              process_name_eng: process_name_eng,
-              lotFlag: flag,
-            };
-            setlotEditObj(lotObj);
-            onOpen();
+            handleTableDataClick(
+              lot_id,
+              time_process,
+              time_workday,
+              process_name,
+              process_name_eng,
+              flag
+            );
           }
         }}
         _hover={process === "Invalid date" ? null : { bgColor: "orange" }}
@@ -129,18 +157,16 @@ function Time() {
         rowSpan={2}
         bgColor={checkCurrTime(time) ? "teal" : null}
         _hover={{ bgColor: "orange" }}
-        onClick={() => {
-          let lotObj = {
-            lotId: lot_id,
-            lotTime: time,
-            workday: workday,
-            process_name: process_name,
-            process_name_eng: process_name_eng,
-            lotFlag: flag,
-          };
-          setlotEditObj(lotObj);
-          onOpen();
-        }}
+        onClick={() =>
+          handleTableDataClick(
+            lot_id,
+            time,
+            workday,
+            process_name,
+            process_name_eng,
+            flag
+          )
+        }
       >
         <Center>{moment(time).format("HH:mm")}</Center>
       </Td>
@@ -157,18 +183,16 @@ function Time() {
   ) {
     return (
       <Td
-        onClick={() => {
-          let lotObj = {
-            lotId: lot_id,
-            lotTime: time,
-            workday: workday,
-            process_name: process_name,
-            process_name_eng: process_name_eng,
-            lotFlag: flag,
-          };
-          setlotEditObj(lotObj);
-          onOpen();
-        }}
+        onClick={() =>
+          handleTableDataClick(
+            lot_id,
+            time,
+            workday,
+            process_name,
+            process_name_eng,
+            flag
+          )
+        }
         bgColor={checkCurrTime(time) ? "teal" : null}
         _hover={{ bgColor: "orange" }}
       >
@@ -242,7 +266,7 @@ function Time() {
       {/* Table Formular */}
       <Box>
         <ItemFormular
-          itemData={itemList.find((item) => item.item_id === selectedItem)}
+          itemData={timeDisplay.find((lot) => lot.item === selectedItem)}
         />
       </Box>
 
@@ -546,6 +570,7 @@ function Time() {
                       )}
                     </>
                   )}
+                  <Td>{time.flag}</Td>
                 </Tr>
               ))}
           </Tbody>

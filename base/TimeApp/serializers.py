@@ -12,6 +12,8 @@ class MyTokenObtainPairSerailizer(TokenObtainPairSerializer):
         return token
 
 class LotSerializer(serializers.ModelSerializer):
+    # formula = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
+    # items = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     class Meta:
         model = Lot
         fields = '__all__'
@@ -22,9 +24,7 @@ class FormulaSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ItemSerializer(serializers.ModelSerializer):
-    formula = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
 
     class Meta:
         model = Item
         fields = "__all__"
-        extra_kwargs = {"item": {"error_messages": {"required": "กรุณาเลือก Item!"}}}

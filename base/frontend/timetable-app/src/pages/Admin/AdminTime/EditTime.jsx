@@ -25,7 +25,6 @@ function EditTime(props) {
   const [newTime, setnewTime] = useState("");
   const [lotList, setlotList] = useState([]);
   const [lotFilteredList, setlotFilteredList] = useState([]);
-  const [updateProgress, setupdateProgress] = useState(0);
 
   const toast = useToast();
 
@@ -38,7 +37,11 @@ function EditTime(props) {
         moment(props.lotEditObj?.workday).format("LLL")
     );
     setlotFilteredList(tempList);
-  }, [props.lotEditObj?.workday]);
+
+    return () => {
+      setlotFilteredList([]);
+    };
+  }, [props.lotEditObj?.workday, newTime]);
 
   function handleChangeTimeClick() {
     let newDateTime, timeDiff;
@@ -64,9 +67,12 @@ function EditTime(props) {
     });
 
     // Filter lot flag >= selected edit lot flag
-    let updateProgress = 0;
+    let startLotFlag = props.lotEditObj?.lotFlag;
+    if (startLotFlag % 2 === 0) {
+      startLotFlag--;
+    }
     lotFilteredList
-      .filter((data) => data.flag >= props.lotEditObj?.lotFlag)
+      .filter((data) => data.flag >= startLotFlag)
       .map((lot) => {
         // Find process in first lot edit
         if (lot.id === props.lotEditObj.lotId) {
@@ -83,17 +89,21 @@ function EditTime(props) {
             Object.entries(lot).filter(([data]) => tmpArr.includes(data))
           );
 
-          Object.keys(updLotObj).forEach(
-            (key) =>
-              (updLotObj[key] = moment(updLotObj[key])
+          Object.keys(updLotObj).forEach((key) => {
+            if (updLotObj[key]) {
+              updLotObj[key] = moment(updLotObj[key])
                 .add(timeDiff, "minutes")
-                .format())
-          );
+                .format();
+              return;
+            }
+            updLotObj[key] = null;
+          });
           Object.assign(updLotObj, {
             item: lot.item,
+            formula: lot.formula,
           });
 
-          console.log({ id: lot.id, timeData: updLotObj });
+          console.log({ flag: lot.flag, timeData: updLotObj });
           axios.put(variables.API_URL + `lot/${lot.id}`, updLotObj, {
             onUploadProgress: () => {
               props.setlotUpdated(true);
@@ -104,14 +114,26 @@ function EditTime(props) {
 
         // Edit all time in lot
         let restLot = Object.fromEntries(
-          Object.entries(lot).filter((data) => data[0].includes("time")) //Filter object key contain "time" only
+          Object.entries(lot).filter(
+            (data) => data[0].includes("time") && !data[0].includes(null)
+          ) //Filter object key contain "time" only
         );
 
         Object.keys(restLot).forEach(
-          (key) => moment(restLot[key]).add(timeDiff, "minutes").format() //update new time to each value in object
+          //update new time to each value in object
+          // (key) => moment(restLot[key]).add(timeDiff, "minutes").format() //update new time to each value in object
+          (key) => {
+            if (restLot[key]) {
+              restLot[key] = moment(restLot[key])
+                .add(timeDiff, "minutes")
+                .format();
+              return;
+            }
+            restLot[key] = null;
+          }
         );
-        Object.assign(restLot, { item: lot.item });
-        console.log(restLot);
+        Object.assign(restLot, { item: lot.item, formula: lot.formula });
+        console.log({ flag: lot.flag, restLot: restLot });
         axios.put(variables.API_URL + `lot/${lot.id}`, restLot);
       });
     //Alert update
@@ -123,7 +145,9 @@ function EditTime(props) {
       icon: <CheckCircleIcon alignSelf="center" />,
     });
 
+    // Reset all value
     props.onClose();
+    setnewTime("");
   }
 
   return (

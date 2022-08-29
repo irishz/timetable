@@ -23,15 +23,18 @@ function ItemFormula(props) {
   const [formulaVisible, setformulaVisible] = useState(false);
 
   useEffect(() => {
-    // console.log(props.itemData.formula[0]);
-    getFormulaData(props.itemData?.formula[0]);
+    // console.log(props);
+    getFormulaData(props.itemData?.formula);
   }, [props.itemData]);
 
-  function getFormulaData(formular_id) {
-    axios.get(variables.API_URL + `formula/${formular_id}`).then((res) => {
-      console.log(res.data);
-      setformula(res.data);
-    });
+  function getFormulaData(formula_id) {
+    if (formula_id) {
+      axios.get(variables.API_URL + `formula/${formula_id}`).then((res) => {
+        // console.log(res.data);
+        setformula(res.data);
+      });
+      return;
+    }
   }
 
   function renderTableRow(mc_name, formula_no, name) {

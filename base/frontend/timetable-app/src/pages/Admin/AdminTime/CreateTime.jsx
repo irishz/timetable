@@ -21,6 +21,13 @@ import {
   Progress,
   Center,
   Input,
+  Table,
+  TableContainer,
+  Thead,
+  Tr,
+  Td,
+  Th,
+  Tbody,
 } from "@chakra-ui/react";
 import axios from "axios";
 import moment from "moment";
@@ -33,8 +40,10 @@ moment.locale("th");
 
 function CreateTime() {
   const [itemList, setitemList] = useState([]);
+  const [formulaList, setformulaList] = useState([]);
   const [previewList, setpreviewList] = useState([]);
   const [selectedItemId, setselectedItemId] = useState(null);
+  const [selectedFormulaId, setselectedFormulaId] = useState(null);
   const [selectedDateTime, setselectedDateTime] = useState(null);
   const [startTime, setstartTime] = useState(null);
   const [workDays, setworkDays] = useState(1);
@@ -45,6 +54,10 @@ function CreateTime() {
     axios.get(variables.API_URL + "item").then((res) => {
       // console.table(res.data);
       setitemList(res.data);
+    });
+
+    axios.get(variables.API_URL + "formula").then((res) => {
+      setformulaList(res.data);
     });
   }, []);
 
@@ -436,6 +449,7 @@ function CreateTime() {
           record_sec_press_time: record_sec_press_time,
           record_sec_press2_time: record_sec_press2_time,
           workday: moment(lastWorkDay).format(),
+          formula: selectedFormulaId,
           flag: totalRow,
         };
         lotList.push(lotObj);
@@ -451,15 +465,12 @@ function CreateTime() {
 
   function renderCell(process) {
     return (
-      <td
-        className={
-          process === "Invalid date"
-            ? "table-cell bg-red-600 text-red-600"
-            : "table-cell"
-        }
+      <Td
+        bgColor={process === "Invalid date" ? "red.600" : null}
+        textColor={process === "Invalid date" ? "red.600" : null}
       >
         {process === "Invalid date" ? "null" : process}
-      </td>
+      </Td>
     );
   }
 
@@ -508,23 +519,40 @@ function CreateTime() {
   return (
     <div className="mx-5">
       {/* ANCHOR Input Form */}
-      <div className="my-3 flex justify-around">
-        <div>
+      <Box my={3} display="flex" justifyContent="space-around">
+        <Box>
           <Select
             name="item"
             id="item"
             onChange={(e) => setselectedItemId(e.target.value)}
             color="teal"
+            placeholder="เลือก Item"
           >
-            <option>เลือก item</option>
             {itemList.map((item) => (
               <option key={item.item_id} value={item.item_id}>
                 {item.item}
               </option>
             ))}
           </Select>
-          <p>{selectedItemId}</p>
-        </div>
+          <Text>{selectedItemId}</Text>
+        </Box>
+
+        <Box>
+          <Select
+            name="formula"
+            id="formula"
+            onChange={(e) => setselectedFormulaId(e.target.value)}
+            color="teal"
+            placeholder="เลือกสูตรการผลิต"
+          >
+            {formulaList.map((data) => (
+              <option key={data.id} value={data.id}>
+                {data.name}
+              </option>
+            ))}
+          </Select>
+          <Text>{selectedFormulaId}</Text>
+        </Box>
 
         <Box>
           <Input
@@ -566,7 +594,7 @@ function CreateTime() {
         <Button variant="solid" colorScheme="red" onClick={onOpen}>
           วางแผน
         </Button>
-      </div>
+      </Box>
 
       {/* ANCHOR SelectedDate  */}
       <Flex marginY={1} justifyContent="space-between">
@@ -594,147 +622,183 @@ function CreateTime() {
 
       {/* ANCHOR Preview Table */}
       {previewList.length > 0 ? (
-        <table className="table-fixed h-24">
-          <thead className="text-center font-medium text-sm border-t border border-gray-600">
-            <tr>
-              <td className="table-cell">Batch No.</td>
-              <td className="table-cell">Run No.</td>
-              <td className="table-cell">เครื่อง</td>
-              <td className="table-cell">เริ่มเดินงาน</td>
-              <td className="table-cell">เวลาผสมเสร็จ</td>
-              <td className="table-cell">ออกจากเอ็กทรูดเดอร์[Extruder]</td>
-              <td className="table-cell">ออกจากพรีเพลส[Pre-Press]</td>
-              <td className="table-cell">
-                เริ่มอบที่ไพรมารี่ เพลส[Primary Press]
-              </td>
-              <td className="table-cell">ออกจากไพรมารี่ เพลส[Primary Press]</td>
-              <td className="table-cell">กด สตีม อิน Steam in</td>
-              <td className="table-cell">
-                เริ่มอบที่ เซกันดารี่ เพลส[Secondary Press]
-              </td>
-              <td className="table-cell">
-                เริ่มอบรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]
-              </td>
-              <td className="table-cell">คูลลิ่ง[Cooling]</td>
-              <td className="table-cell">
-                จดอุณภูมิรอบที่ 1 เซกันดารี่ เพลส[Secondary Press]
-              </td>
-              <td className="table-cell">
-                จดอุณภูมิรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]
-              </td>
-              <td className="table-cell">
-                ออกจาก เซกันดารี่ เพลส[Secondary Press]
-              </td>
-              {/* <td>หมายเหตุ</td> */}
-            </tr>
-          </thead>
-          <tbody className="text-center">
-            {previewList
-              .sort((a, b) => a.flag - b.flag)
-              .filter(
-                (time) =>
-                  moment(time.workday).format("DD/MM/YYYY") ===
-                  moment(selectedDateTime).format("DD/MM/YYYY")
-              )
-              .map((time, idx) => (
-                <tr key={time.flag}>
-                  {/* render batch number */}
-                  {(idx + 1) % 2 === 1 ? (
-                    <td rowSpan={2} className="table-cell">
-                      {time.batch_no}
-                    </td>
-                  ) : null}
-                  {/* render run number & machine number */}
-                  {time.block_qty === 0 && time.block_temp === 3 ? (
-                    <>
-                      <td rowSpan={2} className="table-cell">
-                        {time.run_no}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {time.mc_no}
-                      </td>
-                    </>
-                  ) : time.block_qty === 3 && time.block_temp === 6 ? null : (
-                    <>
-                      <td className="table-cell">{time.run_no}</td>
-                      <td className="table-cell">{time.mc_no}</td>
-                    </>
-                  )}
-                  {/* render start, kneader, end_kneader */}
-                  {renderCell(moment(time.start_time).format("HH:mm"))}
-                  {renderCell(moment(time.kneader_time).format("HH:mm"))}
-                  {renderCell(moment(time.end_extruder_time).format("HH:mm"))}
-                  {time.block_qty === 0 && time.block_temp === 3 ? (
-                    <>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.end_prepress_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.start_prim_press_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.end_prim_press_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.steam_in_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.start_sec_press_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.start_sec_press2_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.cooling_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.record_sec_press_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.record_sec_press2_time).format("HH:mm")}
-                      </td>
-                      <td rowSpan={2} className="table-cell">
-                        {moment(time.end_sec_press_time).format("HH:mm")}
-                      </td>
-                    </>
-                  ) : (idx > 5 && time.block_qty === 3) || idx === 2 ? null : (
-                    <>
-                      <td className="table-cell">
-                        {moment(time.end_prepress_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.start_prim_press_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.end_prim_press_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.steam_in_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.start_sec_press_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.start_sec_press2_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.cooling_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.record_sec_press_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.record_sec_press2_time).format("HH:mm")}
-                      </td>
-                      <td className="table-cell">
-                        {moment(time.end_sec_press_time).format("HH:mm")}
-                      </td>
-                    </>
-                  )}
-                </tr>
-              ))}
-          </tbody>
-        </table>
+        <TableContainer
+          mt={3}
+          border="solid"
+          borderWidth={1}
+          borderColor="gray.300"
+          borderRadius={5}
+        >
+          <Table
+            p={2}
+            display="block"
+            variant="simple"
+            maxWidth="100%"
+            whiteSpace="normal"
+            size="sm"
+          >
+            <Thead>
+              <Tr>
+                <Th textAlign="center" p={1}>
+                  Batch No.
+                </Th>
+                <Th textAlign="center" p={1}>
+                  Run No.
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เครื่อง
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เริ่มเดินงาน
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เวลาผสมเสร็จ
+                </Th>
+                <Th textAlign="center" p={1}>
+                  ออกจากเอ็กทรูดเดอร์[Extruder]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  ออกจากพรีเพลส[Pre-Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เริ่มอบที่ไพรมารี่ เพลส[Primary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  ออกจากไพรมารี่ เพลส[Primary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  กด สตีม อิน Steam in
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เริ่มอบที่ เซกันดารี่ เพลส[Secondary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  เริ่มอบรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  คูลลิ่ง[Cooling]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  จดอุณภูมิรอบที่ 1 เซกันดารี่ เพลส[Secondary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  จดอุณภูมิรอบที่ 2 เซกันดารี่ เพลส[Secondary Press]
+                </Th>
+                <Th textAlign="center" p={1}>
+                  ออกจาก เซกันดารี่ เพลส[Secondary Press]
+                </Th>
+                {/* <td>หมายเหตุ</td> */}
+              </Tr>
+            </Thead>
+            <Tbody className="text-center">
+              {previewList
+                .sort((a, b) => a.flag - b.flag)
+                .filter(
+                  (time) =>
+                    moment(time.workday).format("DD/MM/YYYY") ===
+                    moment(selectedDateTime).format("DD/MM/YYYY")
+                )
+                .map((time, idx) => (
+                  <Tr key={time.flag}>
+                    {/* render batch number */}
+                    {(idx + 1) % 2 === 1 ? (
+                      <Td rowSpan={2} className="table-cell">
+                        {time.batch_no}
+                      </Td>
+                    ) : null}
+                    {/* render run number & machine number */}
+                    {time.block_qty === 0 && time.block_temp === 3 ? (
+                      <>
+                        <Td rowSpan={2} className="table-cell">
+                          {time.run_no}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {time.mc_no}
+                        </Td>
+                      </>
+                    ) : time.block_qty === 3 && time.block_temp === 6 ? null : (
+                      <>
+                        <Td className="table-cell">{time.run_no}</Td>
+                        <Td className="table-cell">{time.mc_no}</Td>
+                      </>
+                    )}
+                    {/* render start, kneader, end_kneader */}
+                    {renderCell(moment(time.start_time).format("HH:mm"))}
+                    {renderCell(moment(time.kneader_time).format("HH:mm"))}
+                    {renderCell(moment(time.end_extruder_time).format("HH:mm"))}
+                    {time.block_qty === 0 && time.block_temp === 3 ? (
+                      <>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.end_prepress_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.start_prim_press_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.end_prim_press_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.steam_in_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.start_sec_press_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.start_sec_press2_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.cooling_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.record_sec_press_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.record_sec_press2_time).format("HH:mm")}
+                        </Td>
+                        <Td rowSpan={2} className="table-cell">
+                          {moment(time.end_sec_press_time).format("HH:mm")}
+                        </Td>
+                      </>
+                    ) : (idx > 5 && time.block_qty === 3) ||
+                      idx === 2 ? null : (
+                      <>
+                        <Td className="table-cell">
+                          {moment(time.end_prepress_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.start_prim_press_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.end_prim_press_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.steam_in_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.start_sec_press_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.start_sec_press2_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.cooling_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.record_sec_press_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.record_sec_press2_time).format("HH:mm")}
+                        </Td>
+                        <Td className="table-cell">
+                          {moment(time.end_sec_press_time).format("HH:mm")}
+                        </Td>
+                      </>
+                    )}
+                  </Tr>
+                ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
       ) : null}
 
       {/* ANCHOR Confirm Modal */}

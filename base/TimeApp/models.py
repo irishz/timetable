@@ -1,6 +1,6 @@
+from pyexpat import model
 from django.db import models
 from datetime import datetime
-
 
 class Item(models.Model):
     item_id = models.AutoField(primary_key=True)
@@ -21,17 +21,18 @@ class Item(models.Model):
     extra1 = models.IntegerField(default=0, blank=True, null=True)
 
 class Formula(models.Model):
-    name = models.CharField(max_length=20, blank=True, null=True)
+    name = models.CharField(max_length=30, blank=True, null=True)
     formula_no = models.IntegerField(default=0, blank=True, null=True)
-    chem_weighing = models.CharField(max_length=20, blank=True, null=True)
-    hopper = models.CharField(max_length=20, blank=True, null=True)
-    kneader = models.CharField(max_length=20, blank=True, null=True)
-    extruder = models.CharField(max_length=20, blank=True, null=True)
-    primary = models.CharField(max_length=20, blank=True, null=True)
-    secondary = models.CharField(max_length=20, blank=True, null=True)
+    chem_weighing = models.CharField(max_length=30, blank=True, null=True)
+    hopper = models.CharField(max_length=30, blank=True, null=True)
+    kneader = models.CharField(max_length=30, blank=True, null=True)
+    extruder = models.CharField(max_length=30, blank=True, null=True)
+    primary = models.CharField(max_length=30, blank=True, null=True)
+    secondary = models.CharField(max_length=30, blank=True, null=True)
 
 class Lot(models.Model):
-    formula = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="formula", default=1)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, related_name="items", default=1)
+    formula = models.ForeignKey(Formula, on_delete=models.CASCADE, related_name="formula", default=1)
     batch_no = models.IntegerField(default=0, blank=True, null=True)
     run_no = models.IntegerField(default=0, blank=True, null=True)
     mc_no = models.IntegerField(default=0, blank=True, null=True)
