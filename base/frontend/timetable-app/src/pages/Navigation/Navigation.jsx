@@ -55,11 +55,14 @@ function Navigation() {
             <Link to="/admin-time/new">
               <Text>จัดการตารางเวลา</Text>
             </Link>
-            <Link to="/user">
+            {/* <Link to="/user">
               <Text>จัดการผู้ใช้</Text>
-            </Link>
+            </Link> */}
             <Link to="/admin-formula">
               <Text>จัดการสูตรการผลิต</Text>
+            </Link>
+            <Link to="/admin-item">
+              <Text>จัดการ Item</Text>
             </Link>
           </>
         ) : null}
@@ -79,8 +82,8 @@ function Navigation() {
                 {colorMode === "light" ? "โหมดสว่าง" : "โหมดมืด"}
               </Switch>
             </MenuItem>
-            <MenuItem>Menu 2</MenuItem>
-            <MenuItem>Menu 3</MenuItem>
+            {/* <MenuItem>Menu 2</MenuItem>
+            <MenuItem>Menu 3</MenuItem> */}
             <Divider />
             <MenuItem
               color="red"

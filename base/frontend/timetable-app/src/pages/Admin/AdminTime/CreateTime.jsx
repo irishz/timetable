@@ -534,7 +534,6 @@ function CreateTime() {
               </option>
             ))}
           </Select>
-          <Text>{selectedItemId}</Text>
         </Box>
 
         <Box>
@@ -551,7 +550,6 @@ function CreateTime() {
               </option>
             ))}
           </Select>
-          <Text>{selectedFormulaId}</Text>
         </Box>
 
         <Box>
@@ -560,7 +558,6 @@ function CreateTime() {
             onChange={(e) => handleDateTimeChange(e)}
             colorScheme="teal"
           />
-          <p>{moment(startTime).format("DD/MM/YYYY HH:mm")}</p>
         </Box>
 
         <Box>
@@ -580,7 +577,6 @@ function CreateTime() {
               <NumberDecrementStepper />
             </NumberInputStepper>
           </NumberInput>
-          <p>{workDays}</p>
         </Box>
 
         <Button
@@ -597,14 +593,21 @@ function CreateTime() {
       </Box>
 
       {/* ANCHOR SelectedDate  */}
-      <Flex marginY={1} justifyContent="space-between">
+      <Flex marginY={1} justifyContent="space-between" alignItems={"baseline"}>
         <Button
           colorScheme="teal"
           onClick={() => handleSelectDateChange("prev")}
         >
           วันก่อนหน้า
         </Button>
-        <Text color="teal" fontSize="18">
+        <Text
+          color="teal"
+          fontSize="18"
+          fontWeight={"semibold"}
+          bgColor={"teal.100"}
+          p={1}
+          rounded="lg"
+        >
           {moment(selectedDateTime).format("DD/MM/YYYY")}
         </Text>
         <Button

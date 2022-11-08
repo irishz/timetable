@@ -74,7 +74,7 @@ function EditTime(props) {
     lotFilteredList
       .filter((data) => data.flag >= startLotFlag)
       .map((lot) => {
-        // Find process in first lot edit
+        // Find process in first lot edit and update
         if (lot.id === props.lotEditObj.lotId) {
           const processId = processList.find(
             (data) => data.process === props.lotEditObj?.process_name_eng
@@ -151,7 +151,7 @@ function EditTime(props) {
   }
 
   return (
-    <Modal isOpen={props.isOpen} onClose={props.onClose}>
+    <Modal isOpen={props.isOpen} onClose={props.onClose} size="xl">
       <ModalOverlay bg="blackAlpha.300" backdropFilter="blur(10px)" />
       <ModalContent>
         <ModalHeader>
@@ -172,6 +172,7 @@ function EditTime(props) {
                 type="time"
                 readOnly
                 value={moment(props.lotEditObj?.lotTime).format("HH:mm")}
+                bgColor="gray.200"
               />
             </Flex>
             <Flex>
