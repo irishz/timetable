@@ -52,7 +52,8 @@ function AdminItemCreate() {
     axios
       .post(`${variables.API_URL}item`, data)
       .then((res) => {
-        if (res.status === 201) {
+        const statList = [200, 201]
+        if (statList.includes(res.status)) {
           toast({
             title: res.data.msg,
             description: "กำลังกลับไปยังหน้า item",
