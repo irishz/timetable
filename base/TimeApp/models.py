@@ -53,3 +53,7 @@ class Lot(models.Model):
     end_sec_press_time = models.DateTimeField(default=datetime.now(), null=True)
     workday = models.DateTimeField(default=datetime.now(), null=False)
     flag = models.IntegerField(default=0, blank=False, null=False)
+    pause_start_time = models.DateTimeField(null=True, blank=True)
+    pause_end_time = models.DateTimeField(null=True, blank=True)
+    pause_reason = models.CharField(max_length=100, null=True, blank=True)
+    notes = models.CharField(max_length=255, null=True, blank=True)
