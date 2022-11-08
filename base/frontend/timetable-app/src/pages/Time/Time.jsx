@@ -411,6 +411,7 @@ function Time() {
         <Box marginY={3}>
           <Text>เลือก Item</Text>
           <Select
+            placeholder="เลือก Item"
             onChange={(e) => setselectedItem(e.target.value)}
             color="teal"
           >
